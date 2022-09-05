@@ -2,12 +2,18 @@ import { useState } from 'react'
 
 const Header = props => <h2>{props.text}</h2>
 
-const Content = ({good, neutral, bad}) => {
+const Statistics = ({good, neutral, bad}) => {
+	const computeTotal = (good,neutral,bad) => good+neutral+bad
+	const computeAvg = (good, neutral, bad) => (good-bad)/computeTotal(good,neutral,bad)
+	const computePos = (good, neutral, bad) => good/computeTotal(good,neutral,bad)*100
 	return (
 		<div>
 			good {good}<br/>
 			neutral {neutral}<br/>
 			bad {bad}<br/>
+			total {computeTotal(good,neutral,bad)}<br/>
+			average {computeAvg(good,neutral,bad)}<br/>
+			positive {computePos(good,neutral,bad)}	%<br/>		
 		</div>
 	)
 }
@@ -35,7 +41,7 @@ const App = () => {
   	  <button onClick={()=>handleFeedback('Neutral')}>Neutral</button>
   	  <button onClick={()=>handleFeedback('Bad')}>Bad</button>
 	  <Header text = 'statistics'/>
-	  <Content good={good} neutral={neutral} bad={bad}/>
+	  <Statistics good={good} neutral={neutral} bad={bad}/>
     </div>
   )
 }
