@@ -6,6 +6,11 @@ const Statistics = ({good, neutral, bad}) => {
 	const computeTotal = (good,neutral,bad) => good+neutral+bad
 	const computeAvg = (good, neutral, bad) => (good-bad)/computeTotal(good,neutral,bad)
 	const computePos = (good, neutral, bad) => good/computeTotal(good,neutral,bad)*100
+	if (computeTotal(good,neutral,bad)===0){
+		return (
+			<div>No feedback given</div>
+		)
+	} else {
 	return (
 		<div>
 			good {good}<br/>
@@ -16,6 +21,7 @@ const Statistics = ({good, neutral, bad}) => {
 			positive {computePos(good,neutral,bad)}	%<br/>		
 		</div>
 	)
+	}
 }
 
 
