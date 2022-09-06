@@ -10,9 +10,10 @@ const Button = ({func, type}) => {
 
 const Statline = ({text, value}) => {
 	return (
-		<div>
-		{text} {value}<br/>
-		</div>
+		<tr>
+		  <td>{text}</td>
+		  <td>{value}</td>
+		</tr>
 	)
 }
 
@@ -26,14 +27,16 @@ const Statistics = ({good, neutral, bad}) => {
 		)
 	} else {
 	return (
-		<div>
+		<table>
+		  <tbody>
 			<Statline text="Good" value = {good}/>
 			<Statline text="Neutral" value = {neutral}/>
 			<Statline text="Bad" value = {bad}/>
 			<Statline text="Total" value = {computeTotal(good,neutral,bad)}/>
 			<Statline text="Average" value = {computeAvg(good,neutral,bad)}/>
-			<Statline text="Positive" value = {computePos(good,neutral,bad)}/>		
-		</div>
+			<Statline text="Positive" value = {computePos(good,neutral,bad)}/>
+		  </tbody>		
+		</table>
 	)
 	}
 }
