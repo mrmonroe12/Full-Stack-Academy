@@ -1,5 +1,23 @@
 import { useState } from 'react'
 
+const AnecdoteBlock = ({type, anecdote, votes}) => {
+	
+	let text = ""
+	if (type === 'top'){
+		text = "Anecdote with the most votes"
+	} else {
+		text = "Anecdote of the day"
+	}
+	return (
+		<div>
+			<h2>{text}</h2>
+	  		<p>{anecdote}</p>
+	  		<p>has {votes} votes</p>
+		</div>
+	)
+	
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -13,12 +31,20 @@ const App = () => {
   
   const [points,setPoints] = useState([0,0,0,0,0,0,0])
    
-  const [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(Math.floor(Math.random() * anecdotes.length))
+  
+  const [mostPop, setMostPop] = useState(selected)
   
   const addVote = () => {
+	console.log(mostPop)
   	const newPoints = [...points]
 	newPoints[selected] = newPoints[selected]+1
-	setPoints(newPoints)    
+	setPoints(newPoints)
+	console.log("newPoints: "+newPoints[selected]+" mostPopPoints: "+newPoints[mostPop])
+	
+	  if (newPoints[selected] > newPoints[mostPop]){
+	  	setMostPop(selected)
+	  }    
   }
 
   const getRand = (anecdotes) => {
@@ -31,10 +57,10 @@ const App = () => {
   }
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-	  <p>has {points[selected]} votes</p>
+      <AnecdoteBlock anecdote={anecdotes[selected]} votes={points[selected]}/>
 	  <button onClick = {()=>addVote()}>Vote for this one</button>
 	  <button onClick = {()=>getRand(anecdotes.length)}>Randomize Quote</button>
+	  <AnecdoteBlock type = 'top' anecdote={anecdotes[mostPop]} votes={points[mostPop]}/>
     </div>
   )
 }
