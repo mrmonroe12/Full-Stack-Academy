@@ -6,10 +6,20 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('Add a name...')
 
+  const checkNameMatch = (personName) => {
+  	return persons.some(
+		(person) => person.name === personName
+	)
+	
+  }
   const addName = (event) => {
   	event.preventDefault()
-	  setPersons(persons.concat({name: newName}))
-	setNewName('Add another name...')
+	if (checkNameMatch(newName)){
+		alert(`${newName} already added!`)
+	} else {
+		setPersons(persons.concat({name: newName}))
+		setNewName('Add another name...')
+	}
   }
   
   const handleNameChange = (event) => {
