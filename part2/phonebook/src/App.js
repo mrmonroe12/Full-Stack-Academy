@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import PersonForm from './components/PersonForm'
+import SearchBar from './components/SearchBar'
+import PersonsList from  './components/PersonsList'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,7 +16,7 @@ const App = () => {
 
   const checkNameMatch = (personName) => {
   	return persons.some(
-		(person) => person.name === personName
+		(person) => person.name.toLowerCase() === personName.toLowerCase()
 	)
 	
   }
@@ -22,9 +25,10 @@ const App = () => {
 	if (checkNameMatch(newName)){
 		alert(`${newName} already added!`)
 	} else {
-		setPersons(persons.concat({name: newName, number: newNumber}))
+		setPersons(persons.concat({name: newName, number: newNumber, id: persons.length+1}))
 		setNewName('Enter name...')
 		setNewNumber('Enter number... ')
+		
 	}
   }
   
@@ -47,32 +51,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-	  <div>
-	  	search by name containing: 
-			<input
-		value={searchFilter}
-		onChange={handleSearchFilter}/>
-	  </div>						
+	  <SearchBar searchFilter = {searchFilter} handleSearchFilter = {handleSearchFilter}/>				
 	  <h2>Add New</h2>
-      <form>
-        <div>
-          name: <input 
-	  				value={newName}
-					onChange={handleNameChange}/>
-        </div>
-		<div>
-		  number: <input 
-					value={newNumber}
-					onChange={handleNumberChange}/>
-		</div>
-        <div>
-          <button type="submit" onClick={addName}>add</button>
-        </div>
-      </form>
+	  <PersonForm newName={newName} newNumber={newNumber} addName={addName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-		  {persons
-			  .filter(person=>person.name.indexOf(searchFilter)>=0)
-			  .map(person=><p key={person.name}>{person.name} {person.number}</p>)}
+	  <PersonsList persons={persons} searchFilter={searchFilter}/>
     </div>
   )
 }
