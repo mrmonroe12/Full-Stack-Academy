@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 
+
 const List = ({countries,filteredCountries}) => {
 	
 	if (filteredCountries.length === 0) {
@@ -25,6 +26,34 @@ const List = ({countries,filteredCountries}) => {
 	)}
 	else return <div>Too many matches, specify another filter</div>
 
+}
+
+const Weather = ({city, latlng}) => {
+	const api_key = process.env.REACT_APP_API_KEY
+	const tempConv = inTemp => ((inTemp-273.15)*9/5+32).toPrecision(3)
+	const windSpeedConv = inSpeed => (inSpeed*2.23694).toPrecision(3)
+	
+	const [weather, updateWeather] = useState({})
+	useEffect(()=> {
+		axios
+			.get(`https://api.openweathermap.org/data/2.5/weather?lat=${latlng[0]}&lon=${latlng[1]}&appid=${api_key}`)
+			.then(response=>updateWeather(response.data),()=>console.log('Failed to get weather'))	
+		}
+		,[])
+		
+		if (typeof weather.main != 'undefined'){
+	return (
+		<div>
+			<h3>Current Weather in {city}</h3>
+			<p>Temperature is {tempConv(weather.main.temp)} Fahrenheit</p>
+		<p>Conditions are {weather.weather[0].main}</p>
+		<p>Wind speed is {windSpeedConv(weather.wind.speed)} mph</p>
+		</div>
+	)}
+	else return (
+		<div>
+		</div>
+	)
 }
 
 const ListRow = ({country, style}) => {
@@ -60,6 +89,7 @@ const ListRow = ({country, style}) => {
 			</ul>
 			<br/>
 			<img src ={country.flags.png} />
+			<Weather city={country.capital[0]} latlng = {country.capitalInfo.latlng}/>
 			</div>
 		)
 	}
@@ -84,19 +114,8 @@ const App = () => {
     useEffect(()=>{
     	axios
   	  .get('https://restcountries.com/v3.1/all')
-  	  .then(response=>addCountries(response.data),()=>console.log("p1 failed"))
-	  .then(()=>console.log("Am I doing this?"),()=>console.log("p2 failed"))
-	  .then(updateFilteredCountries(countries
-			.map(country=> {
-				const addView = {}
-				
-				addView.country = country
-				addView.view = "compact"
-				return addView
-			}
-	  )),()=>console.log("p3 failed"))
-  	  .then(()=>console.log("How about this?")
-  	  )},[])
+  	  .then(response=>addCountries(response.data),()=>console.log("Failed to get countries"))
+  	  },[])
 			  
   
 	  
@@ -109,12 +128,3 @@ const App = () => {
 }
 
 export default App;
-
-
-/*
-			<ul>{Object.entries(country.languages)				
-				.map(language=>
-						<li key={language[0]}>{language[1]}</li>
-				)}
-			</ul>
-*/
