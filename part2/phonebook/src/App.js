@@ -31,7 +31,12 @@ const App = () => {
 	if (checkNameMatch(newName)){
 		alert(`${newName} already added!`)
 	} else {
-		setPersons(persons.concat({name: newName, number: newNumber, id: persons.length+1}))
+		const newPerson = {
+			name: newName, number: newNumber
+		}
+		axios
+			.post('http://localhost:3001/persons', newPerson)
+		setPersons(persons.concat(newPerson))
 		setNewName('Enter name...')
 		setNewNumber('Enter number... ')
 		
