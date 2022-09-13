@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const SearchBar = () => {
-} 
 
-
-const List = ({countries,filter}) => {
+const List = ({countries,filteredCountries}) => {
 	
-	const filteredCountries = countries.filter(country => country.name.common.toLowerCase().indexOf(filter.toLowerCase())>=0)
-
 	if (filteredCountries.length === 0) {
 		return (
 			<div>no matching countries</div>
@@ -33,12 +28,26 @@ const List = ({countries,filter}) => {
 }
 
 const ListRow = ({country, style}) => {
-	if (style === "compact"){
-		return (<div>{country.name.common}</div>)
-	} else if (style === "detail"){
+	
+	const [viewState, toggleViewState] = useState(style)
+	const showClickHandler = (event) => {
+		event.preventDefault()
+		if (viewState==="compact") toggleViewState("detail")
+		else toggleViewState("compact")
+	}
+	
+	useEffect(() => {
+		toggleViewState(style)
+	},[style])
+	
+	if (viewState === "compact"){
+		return (
+			<div>{country.name.common}<button onClick={showClickHandler}>expand collapse</button></div>
+		)
+	} else if (viewState === "detail"){
 		return (
 			<div>
-			<h2>{country.name.common}</h2>
+			<h2>{country.name.common}</h2><button onClick={showClickHandler}>expand collapse</button>
 			<br/>
 			<p>Capital: {country.capital[0]}</p>
 			<p>Area: {country.area}</p>
@@ -62,20 +71,39 @@ const App = () => {
 	
 	const [countries, addCountries] = useState([])
 	const [searchFilter, trackSearchFilter] = useState("")
-	
+	const [filteredCountries, updateFilteredCountries] = useState([])
 	const handleSearchFilter = (event) => {
 		trackSearchFilter(event.target.value)
+		updateFilteredCountries(countries
+			.filter(country => 
+				country.name.common.toLowerCase()
+				.indexOf(event.target.value.toLowerCase())>=0))
 	}
+	
 	
     useEffect(()=>{
     	axios
   	  .get('https://restcountries.com/v3.1/all')
-  	  .then(response=>addCountries(response.data))},[])
+  	  .then(response=>addCountries(response.data),()=>console.log("p1 failed"))
+	  .then(()=>console.log("Am I doing this?"),()=>console.log("p2 failed"))
+	  .then(updateFilteredCountries(countries
+			.map(country=> {
+				const addView = {}
+				
+				addView.country = country
+				addView.view = "compact"
+				return addView
+			}
+	  )),()=>console.log("p3 failed"))
+  	  .then(()=>console.log("How about this?")
+  	  )},[])
+			  
+  
 	  
   return (
     <div>
 	  <input value={searchFilter} onChange={handleSearchFilter}/>
-	  <List countries={countries} filter = {searchFilter}/>
+	  <List countries={countries} filteredCountries = {filteredCountries}/>
     </div>
   )
 }
