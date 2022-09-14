@@ -27,14 +27,23 @@ const App = () => {
 	)
 	
   }
+  
   const addName = (event) => {
   	event.preventDefault()
+	const newPerson = {
+		name: newName, number: newNumber
+	}
 	if (checkNameMatch(newName)){
-		alert(`${newName} already added!`)
+		if (window.confirm(`${newName} already exists, update their number?`)){
+			const id = persons.find(person=>person.name===newName).id
+			personsService
+				.update(id, newPerson)
+				.then(returnedPerson=>{
+					setPersons(persons.map(person=> person.id !== id ? person : returnedPerson))
+				})	
+		}			
 	} else {
-		const newPerson = {
-			name: newName, number: newNumber
-		}
+		
 		personsService
 			.create(newPerson)
 			.then(returnedPerson => {
