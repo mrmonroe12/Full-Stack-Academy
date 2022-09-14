@@ -3,6 +3,7 @@ import PersonForm from './components/PersonForm'
 import SearchBar from './components/SearchBar'
 import PersonsList from  './components/PersonsList'
 import axios from 'axios'
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,11 +12,11 @@ const App = () => {
   const [searchFilter, setSearchFilter] = useState('')
   
   useEffect(()=>{
-  	axios
-	  .get('http://localhost:3001/persons')
+  	personsService
+	  .getAll()
 	  .then(
-		  response => {
-		  	setPersons(response.data)
+		  initialPersons => {
+		  	setPersons(initialPersons)
 		  }
 	  )
   },[])
@@ -34,28 +35,27 @@ const App = () => {
 		const newPerson = {
 			name: newName, number: newNumber
 		}
-		axios
-			.post('http://localhost:3001/persons', newPerson)
-		setPersons(persons.concat(newPerson))
-		setNewName('Enter name...')
-		setNewNumber('Enter number... ')
-		
+		personsService
+			.create(newPerson)
+			.then(returnedPerson => {
+				setPersons(persons.concat(returnedPerson))
+				setNewName('')
+				setNewNumber('')
+				
+			})	
+  		}
 	}
-  }
   
   const handleNameChange = (event) => {
-	console.log(event.target.value)
   	setNewName(event.target.value)
   }
   
   
   const handleNumberChange = (event) => {
-	console.log(event.target.value)
   	setNewNumber(event.target.value)
   }
   
   const handleSearchFilter = (event) => {
-	console.log(event.target.value)
   	setSearchFilter(event.target.value)
   }
 
@@ -66,7 +66,7 @@ const App = () => {
 	  <h2>Add New</h2>
 	  <PersonForm newName={newName} newNumber={newNumber} addName={addName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-	  <PersonsList persons={persons} searchFilter={searchFilter}/>
+	  <PersonsList persons={persons} searchFilter={searchFilter} setPersons={setPersons}/>
     </div>
   )
 }

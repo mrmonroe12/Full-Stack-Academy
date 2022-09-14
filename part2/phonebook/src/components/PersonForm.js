@@ -15,7 +15,7 @@ const PersonForm = (props)=>{
 					onChange={props.handleNumberChange}/>
 		</div>
 		  <div>
-		    <Button type="submit" onClick={props.addName} text="add"/>
+		    <Button onClick={props.addName} text="add"/>
 		  </div>
 		</form>
 	)
