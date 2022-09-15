@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
     { 
       "id": 1,
@@ -24,6 +26,8 @@ let persons = [
     }
 ]
 
+const getRandomInt = max => Math.floor(Math.random() * max)
+
 app.get('/api/persons', (request, response) => {
 	response.json(persons)
 })
@@ -38,6 +42,20 @@ app.get('/api/persons/:id', (request, response) => {
 		response.statusMessage = 'Id not found'
 		response.status(404).end()
 	}
+	
+})
+
+app.post('/api/persons', (request, response) => {
+	const body = request.body
+	const id = getRandomInt(1000000000)
+	
+	const person = {
+		id: id,
+		name: body.name,
+		number: body.number
+	}
+	persons = persons.concat(person)
+	response.json(person)
 	
 })
 
