@@ -28,6 +28,8 @@ let persons = [
 
 const getRandomInt = max => Math.floor(Math.random() * max)
 
+const personExists = personName => persons.some(person => person.name.toLowerCase() === personName.toLowerCase())
+
 app.get('/api/persons', (request, response) => {
 	response.json(persons)
 })
@@ -48,6 +50,18 @@ app.get('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
 	const body = request.body
 	const id = getRandomInt(1000000000)
+	
+	if (!(body.name && body.number)) {
+		return response.status(400).json({
+			error: 'name and number required'
+		})
+	}
+	console.log(personExists(body.name))
+	if (personExists(body.name)) {
+		return response.status(400).json({
+			error: 'name must be unique (not case sensitive)'
+		})
+	}
 	
 	const person = {
 		id: id,
