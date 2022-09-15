@@ -41,6 +41,20 @@ app.get('/api/persons/:id', (request, response) => {
 	
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+	const id = Number(request.params.id)
+	const person = persons.find(person=> person.id === id)
+	
+	if (person) {
+		persons = persons.filter(person => person.id !== id)
+		response.status(204).end()
+	} else {
+		response.statusMessage = 'Id not found'
+		response.status(404).end()
+	}
+	
+})
+
 app.get('/info', (request, response) => {
 	const numPersons = persons.length
 	const date = new Date()
