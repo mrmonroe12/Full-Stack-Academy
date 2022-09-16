@@ -1,6 +1,9 @@
 const express = require('express')
+const morgan = require('morgan')
+
 const app = express()
 
+app.use(morgan('tiny'))
 app.use(express.json())
 
 let persons = [
@@ -56,7 +59,7 @@ app.post('/api/persons', (request, response) => {
 			error: 'name and number required'
 		})
 	}
-	console.log(personExists(body.name))
+
 	if (personExists(body.name)) {
 		return response.status(400).json({
 			error: 'name must be unique (not case sensitive)'
