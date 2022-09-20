@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
@@ -13,6 +14,7 @@ const logger = morgan('tiny', {skip: function (req,res) {return req.method === '
 app.use(logger)
 app.use(postlogger)
 app.use(express.json())
+app.use(cors())
 
 let persons = [
     { 
