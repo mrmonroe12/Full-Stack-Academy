@@ -15,6 +15,7 @@ app.use(logger)
 app.use(postlogger)
 app.use(express.json())
 app.use(cors())
+app.use(express.static('build'))
 
 let persons = [
     { 
@@ -112,6 +113,7 @@ app.get('/info', (request, response) => {
 	response.send(content)
 })
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+	console.log(`Server running on port ${PORT}`)
+})
