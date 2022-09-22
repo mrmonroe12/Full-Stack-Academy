@@ -105,7 +105,13 @@ app.put('/api/persons/:id', (request, response, next) => {
 			 {name, number},
 			 {new: true, runValidators: true, context: 'query'}
 		)
-			.then(updatedPerson => response.json(updatedPerson))
+		.then(updatedPerson => {
+			if (updatedPerson) {
+				response.json(updatedPerson)
+			} else {
+				return response.status(404).json({error: "Inconsistent Entry: Try Again"})
+			}
+		})
 			.catch(error=> next(error))
 })
 
@@ -148,7 +154,7 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-	console.error(error.message)
+	console.log('called error handler')
 	
 	if (error.name === 'CastError') {
 		return response.status(400).send({error: 'Malformatted ID'})

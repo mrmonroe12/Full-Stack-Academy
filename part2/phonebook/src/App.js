@@ -12,7 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('Enter name...')
   const [newNumber, setNewNumber] = useState('Enter number...')
   const [searchFilter, setSearchFilter] = useState('')
-	const [message, setMessage] = useState({type: null, message:null})
+  const [message, setMessage] = useState({type: null, message:null})
   
   useEffect(()=>{
   	personsService
@@ -37,8 +37,8 @@ const App = () => {
 	  setTimeout(()=>setMessage({type:null,message:null}),4000)
   }
   
-  const dispFailureMessage = (personName) => {
-  	setMessage({type:'error',message:`${personName} already deleted`})
+  const dispFailureMessage = (error) => {
+  	setMessage({type:'error',message: error})
 	  setTimeout(()=>setMessage({type:null,message:null}),4000)
   }
   
@@ -59,8 +59,11 @@ const App = () => {
 					dispSuccessMessage('Updated',newName)
 				})
 				.catch(error=>{
-					dispFailureMessage(newName)
-					setPersons(persons.filter(person=> person.name !== newName))
+					if (error.response.status === 404) {
+						setPersons(persons.filter(person=> person.id !== id))
+					}
+					dispFailureMessage(error.response.data.error)
+
 				})			
 		} 
 	} else {
@@ -73,7 +76,10 @@ const App = () => {
 					setNewNumber('')
 					dispSuccessMessage('Added', newName)
 				
-			})	
+				})
+				.catch(error=>{
+					dispFailureMessage(error.response.data.error)
+				})	
   		}
 	}
   
