@@ -11,12 +11,12 @@ const mongoUrl = config.MONGODB_URI
 
 logger.info('Attempting to connect to database')
 mongoose.connect(mongoUrl)
-	.then(()=> {
-		logger.info('Connected to MongoDB')
-	})
-	.catch((error)=> {
-		logger.error('Error connecting to MongoDB', error.message)
-	})
+    .then(() => {
+        logger.info('Connected to MongoDB')
+    })
+    .catch((error) => {
+        logger.error('Error connecting to MongoDB', error.message)
+    })
 
 app.use(cors())
 app.use(express.json())
