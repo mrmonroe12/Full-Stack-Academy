@@ -13,6 +13,7 @@ const PersonForm = (props)=>{
 		  number: <Input 
 					value={props.newNumber}
 					onChange={props.handleNumberChange}/>
+		  <p>Format must be xxx-xxx-xxxx</p>
 		</div>
 		  <div>
 		    <Button onClick={props.addName} text="add"/>
