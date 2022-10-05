@@ -62,17 +62,7 @@ const biggerListOfBlogs = [
     }
 ]
 
-test('dummy returns one', () => {
-    const blogs = []
-    const result = listHelper.dummy(blogs)
-    expect(result).toBe(1)
-})
-
 describe('total likes', () => {
-    
-
-
-
     test('of empty list is zero', () => {
         const result = listHelper.totalLikes([])
         expect(result).toBe(0)
@@ -95,22 +85,70 @@ describe('favorite blog', () => {
         author: 'Edsger W. Dijkstra',
         likes: 5
     }
-    
-    const manyBlogResult = 
+
+    const manyBlogResult =
     {
         title: 'Canonical string reduction',
         author: 'Edsger W. Dijkstra',
         likes: 12
     }
-    
+
     test('when list is empty', () => {
         expect(listHelper.favoriteBlog([])).toEqual({})
     })
     test('when list has only 1 blog', () => {
         expect(listHelper.favoriteBlog(biggerListOfBlogs)).toEqual(manyBlogResult)
     })
-    
+
     test('when list has many blogs', () => {
         expect(listHelper.favoriteBlog(listWithOneBlog)).toEqual(oneBlogResult)
+    })
+})
+
+describe('most blogs', () => {
+    const oneBlogResult = {
+        author: 'Edsger W. Dijkstra',
+        blogs: 1
+    }
+
+    const manyBlogResult =
+    {
+        author: 'Robert C. Martin',
+        blogs: 3
+    }
+
+    test('when list is empty', () => {
+        expect(listHelper.mostBlogs([])).toEqual({})
+    })
+    test('when list has many blogs', () => {
+        expect(listHelper.mostBlogs(biggerListOfBlogs)).toEqual(manyBlogResult)
+    })
+
+    test('when list has 1 blog', () => {
+        expect(listHelper.mostBlogs(listWithOneBlog)).toEqual(oneBlogResult)
+    })
+})
+
+describe('most likes', () => {
+    const oneBlogResult = {
+        author: 'Edsger W. Dijkstra',
+        likes: 5
+    }
+
+    const manyBlogResult =
+    {
+        author: 'Edsger W. Dijkstra',
+        likes: 17
+    }
+
+    test('when list is empty', () => {
+        expect(listHelper.mostLikes([])).toEqual({})
+    })
+    test('when list has many blogs', () => {
+        expect(listHelper.mostLikes(biggerListOfBlogs)).toEqual(manyBlogResult)
+    })
+
+    test('when list has 1 blog', () => {
+        expect(listHelper.mostLikes(listWithOneBlog)).toEqual(oneBlogResult)
     })
 })
