@@ -1,9 +1,13 @@
 const info = (...params) => {
-    console.log('[Dev Log]',...params)
+    if (process.env.NODE_ENV !== 'test') {
+        console.log('[Dev Log]',...params)
+    }
 }
 
 const error = (...params) => {
-    console.error('[Dev Error]',...params)
+    if (process.env.NODE_ENV !== 'test') {
+        console.error('[Dev Error]',...params)
+    }
 }
 
 module.exports = {
