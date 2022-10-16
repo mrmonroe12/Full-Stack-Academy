@@ -1,14 +1,22 @@
 const mongoose = require('mongoose')
-const supertest = require('supertest')
+const supertest = require('supertest').agent
 const app = require('../app')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
 const api = supertest(app)
+const User = require('../models/user')
 
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+    await User.deleteMany({})
+    await User.insertMany(helper.initialUsers)
+    const response = await api
+        .post('/api/login')
+        .send({username: 'fakeusername', password: 'badpass'})
+    const token = response.body.token
+    api.auth(token, {type: 'bearer'})
 },100000) 
 
 describe('when there are some initial blogs stored', () => {
@@ -36,8 +44,9 @@ describe('when there are some initial blogs stored', () => {
         expect(titles).toContain('Test Post 1')
     })
 })
-describe('when attempting to add new notes', () => {
-    test('a valid note can be added', async () => {
+describe('when attempting to add new blogs', () => {
+    test('a valid blog can be added', async () => {
+
         await api
         .post('/api/blogs')
         .send(helper.newBlog)
@@ -51,7 +60,7 @@ describe('when attempting to add new notes', () => {
         expect(titles).toContain('Offensive UFR - Iowa 22')
     })
 
-    test('a note without a title or url is rejected', async () => {
+    test('a blog without a title or url is rejected', async () => {
         await api
         .post('/api/blogs')
         .send(helper.badBlogTitle)
@@ -105,15 +114,23 @@ describe('when updating a note', () => {
 })
 
 describe('when deleting a note', () => {
-    test('success with proper status if id is valid', async () => {
-        const blogsAtStart = await helper.blogsInDb()
-        const blogToDelete = blogsAtStart[0]
+    test('success with proper status if correct user and id is valid', async () => {
+        const response = await api
+        .post('/api/blogs')
+        .send(helper.newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+        const blogToDelete = response.body
+        console.log(blogToDelete)
+        /*const blogsAtStart = await helper.blogsInDb()
+        const matchingBlogs = await Blog.find({ title: helper.newBlog.title})
+        const blogToDelete = matchingBlogs[0]*/
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length-1)
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
         const titles = blogsAtEnd.map(blog => blog.title)
         expect(titles).not.toContain(blogToDelete.title)
             

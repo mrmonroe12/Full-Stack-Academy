@@ -13,8 +13,6 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const body = request.body
     const user = request.user
-    console.log("From Post Request: ", request.user)
-
     const blog = new Blog({
         title: body.title,
         author: body.author,
@@ -32,8 +30,6 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
     const user_id = request.user._id.toString()
     const blog = await Blog.findById(request.params.id)
-    console.log("Delete Router User ID: ",user_id)
-    console.log("Delete Router Blog user id: ", blog.user.toString())
     if (user_id === blog.user.toString()) {
         await Blog.findByIdAndRemove(request.params.id)
         response.status(204).end()
